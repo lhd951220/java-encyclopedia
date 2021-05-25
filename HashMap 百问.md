@@ -156,7 +156,17 @@ static final int tableSizeFor(int cap) {
 
 # HashMap 的长度为什么是 2 的 N 次方呢？
 
-2 的 N次方，计算位置效率高，只需要通过位移运算即可，尽可能地减少 hash 值的碰撞。在扩容的时候，也无需再重新计算它的位置，通过容量的最高位与 hashcode 相同位做 & 运算，如果为 1，则存放到（原位置 + 原容量）的位置上，如果为 0，则在原位置上。
+2 的 N 次方，计算位置效率高，只需要通过位移运算即可，尽可能地减少 hash 值的碰撞。在扩容的时候，也无需再重新计算它的位置，通过容量的最高位与 hashcode 相同位做 & 运算，如果为 1，则存放到（原位置 + 原容量）的位置上，如果为 0，则在原位置上。
 
 # 说说什么是 Fail-Fast？
+
+Fail-Fast 是集合的一种错误机制，如果在 iterator 创建之后，map 中的结构发生了变化，就会出现 Fail-Fast，在 JDK8 中只能通过 iterator 自身的 `remove` 方法去更新，否则就会抛出 `ConcurrentModificationException` 异常。所以，在面对并发修改时，它可以快速明确地失败，而不是在未来不确定的时间中冒着不确定行为的风险。
+
+比如：有两个线程 a 和 b，a 线程中创建了 iterator 对象，并开始遍历里面的元素，在遍历完成之前，线程 b 使用常规的方法在 map 中添加了一个元素，在这个动作完成之后，线程 a 遍历下一个元素的时候，就会抛出 `ConcurrentModificationException` 异常。因为线程 b 添加了一个元素，改了 map 中元素的数量。
+
+它的原理是：在创建 iterator 对象的时候，会将 modCount （modificationCount）记录为 expectModCount，此后，每一次遍历操作都会使用 expectModCount 与 modCount 进行比较，如果不同，则会抛出 `ConcurrentModificationException` 异常。
+
+
+
+
 
