@@ -166,7 +166,61 @@ Fail-Fast 是集合的一种错误机制，如果在 iterator 创建之后，map
 
 它的原理是：在创建 iterator 对象的时候，会将 modCount （modificationCount）记录为 expectModCount，此后，每一次遍历操作都会使用 expectModCount 与 modCount 进行比较，如果不同，则会抛出 `ConcurrentModificationException` 异常。
 
+# HashMap 中的 key 我们可以使用任何类作为 key 吗？
 
+可以，但是这些类需要满足一定的条件：
 
+- 这些类中必须要有 `hashcode` 和 `equal` 方法，因为在 Java 中，所有类的父类都是 `Object`，而该类中就有这两个方法，默认所有的类都具备这两个方法。
+- 如果类重写了 `equal` 方法，那么它也要重写 `hashcode` 方法，使其满足一定的特性。
+- 这个类最好是一个不可变类，因为 JVM 会在对象头中缓存对象的 hashcode，使其在 HashMap 中有更好的性能。不可变类也可以保证 `hashcode` 和 `equal` 在未来不会被改变。
 
+# HashMap，LinkedHashMap，TreeMap 有什么区别？
 
+`LinkedHashMap` 继承 `HashMap`，它是由 `HashMap` 和双向链表组合而成。
+
+`HashMap` 是无序的，`LinkedHashMap` 是有序的，它可以分为插入顺序和访问顺序。
+
+`TreeMap` 是基于红黑树的实现，它提供的是 log(n) 的插入、查找、删除。
+
+# Map 家族
+
+```mermaid
+classDiagram
+    class Map {
+        <<interface>>
+        +int size()
+        +boolean isEmpty()
+        +boolean containsKey(Object key)
+        +boolean containsValue(Object value)
+        +V get(Object key)
+        +V put(K key, V value);
+        +V remove(Object key);
+        
+    }
+    class AbstractMap{
+    	<<abstract>>
+    }
+	Map <|-- AbstractMap
+	Map <|-- LinkedHashMap
+	AbstractMap <|-- HashMap
+	HashMap <|-- LinkedHashMap
+	AbstractMap <|-- TreeMap
+	AbstractMap <|-- EmunMap
+	AbstractMap <|-- WeakHashMap
+	Map <|-- WeakHashMap
+
+```
+
+# 说说对红黑树的了解
+
+红黑树是一种自平衡的二叉查找树，它是对二叉查找树的一种改进，具有高效的查找性能。
+
+具有以下几条性质：
+
+- 每个节点都为红色或者黑色
+- 根节点为黑色
+- 空节点为黑色
+- 每个红色节点必须有两个黑色的子节点，即不能出现两个连续的红色节点。
+- 在任何一棵子树中，每一条从根节点向下走到空节点的路径上包含的黑色节点数量都相同。
+
+![](http://cdn.dengqiuying.cn/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%B9%B3%E8%A1%A1%E6%83%85%E5%86%B5.jpg)
