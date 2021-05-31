@@ -114,6 +114,52 @@ public class AVLTree<E extends Comparable<E>> {
     }
 
     public boolean remove(E e){
+        if(e == null) return false;
+        Node<E> r = root;
+
+        do{
+            int cmp = e.compareTo(r.e);
+            if(cmp < 0){
+                r = r.left;
+            } else if(cmp > 0){
+                r = r. right;
+            } else {
+                break
+            }
+        }while(r != null);
+
+        Node<E> p = r.parent;
+
+        if(r.left == null && r.right == null){
+            if(p == null){
+                this.root = null;
+            }else {
+                if(r.parent.left == r){
+                    r.parent.left = null;
+                } else {
+                    r.parent.right = null;
+                }
+                r.parent = null;
+            }
+        } else if(r.left != null && r.right == null){
+            if(p == null){
+                root = r.left;
+                root.parent = null;
+            } else {
+                if(r.parent.left == r){
+                    r.parent.left = r.left;
+                } else {
+                    r.parent.right = r.left;
+                }
+                r.left.parent = p;
+            }
+            r.parent = null;
+        } else if(r.left == null && r.right != null){
+            
+        } else {
+
+        }
+
 
     }
 
@@ -156,8 +202,8 @@ public class AVLTree<E extends Comparable<E>> {
             Node<E> p = e.parent;
             Node<E> ch = e;
             while(p != null && p.right == ch){
-                p = p.parent;
                 ch = p;
+                p = p.parent;
             }
             return p;
         }
@@ -173,7 +219,12 @@ public class AVLTree<E extends Comparable<E>> {
             }
             return r;
         } else {
-            
+            Node<E> p = e.parent;
+            Node<E> ch = e;
+            while(p != null && p.left == ch){
+                ch = p;
+                p = p.parent;
+            }
         }
     }
 
