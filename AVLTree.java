@@ -114,7 +114,7 @@ public class AVLTree<E extends Comparable<E>> {
     }
 
     public boolean remove(E e){
-
+        
     }
 
     private void fixAfterInsertion(Node<E> parent, int heightDiff) {
@@ -156,8 +156,8 @@ public class AVLTree<E extends Comparable<E>> {
             Node<E> p = e.parent;
             Node<E> ch = e;
             while(p != null && p.right == ch){
-                p = p.parent;
                 ch = p;
+                p = p.parent;
             }
             return p;
         }
@@ -173,7 +173,13 @@ public class AVLTree<E extends Comparable<E>> {
             }
             return r;
         } else {
-            
+            Node<E> p = e.parent;
+            Node<E> ch = e;
+            while(p != null && ch == p.left){
+                ch = p;
+                p = p.parent;
+            }
+            return p;
         }
     }
 
@@ -225,4 +231,3 @@ public class AVLTree<E extends Comparable<E>> {
         }
     }
 }
-
