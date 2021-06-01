@@ -143,8 +143,8 @@ public class AVLTree<E extends Comparable<E>> {
             }
         } else if(r.left != null && r.right == null){
             if(p == null){
-                root = r.left;
-                root.parent = null;
+                this.root = r.left;
+                this.root.parent = null;
             } else {
                 if(r.parent.left == r){
                     r.parent.left = r.left;
@@ -155,12 +155,22 @@ public class AVLTree<E extends Comparable<E>> {
             }
             r.parent = null;
         } else if(r.left == null && r.right != null){
-            
+            if(p == null){
+                this.root = r.right;
+                this.root.parent = null; 
+            } else {
+                if(r.parent.left == r){
+                    r.parent.left = r.right;
+                } else {
+                    r.parent.right = r.right;
+                }
+                r.right.parent = p;
+            }
+            r.parent = null;
         } else {
-
+            // 需要删除的节点拥有两个子节点，取其后继者作为该位置的节点。
+            successor(r);
         }
-
-
     }
 
     private void fixAfterInsertion(Node<E> parent, int heightDiff) {
