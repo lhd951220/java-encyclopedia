@@ -170,7 +170,21 @@ public class AVLTree<E extends Comparable<E>> {
         } else {
             // 如果待删除节点拥有左右节点时，则查看左右节点子树的高度，如果左子树较高，则使用前驱节点进行替换，如果右子树较高，则使用后继节点进行替换
             // 最后再查看树是否平衡。
-            successor(r);
+            lHeight = height(r.left);
+            rHeight = height(r.right);
+            Node<E> n;
+            if(lHeight > rHeight){
+                n = predecessor(r);
+                if(n.left != null){
+                    n.parent.right = n.left;
+                }
+            } else {
+                n = successor(r);
+                if(n.right != null){
+                    n.parent.left = n.right;
+                }
+            }
+            r.e = n.e;
         }
     }
 
