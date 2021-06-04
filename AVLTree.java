@@ -114,7 +114,78 @@ public class AVLTree<E extends Comparable<E>> {
     }
 
     public boolean remove(E e){
-        
+        if(e == null) return false;
+        Node<E> r = root;
+
+        do{
+            int cmp = e.compareTo(r.e);
+            if(cmp < 0){
+                r = r.left;
+            } else if(cmp > 0){
+                r = r. right;
+            } else {
+                break
+            }
+        }while(r != null);
+
+        Node<E> p = r.parent;
+
+        if(r.left == null && r.right == null){
+            if(p == null){
+                this.root = null;
+            }else {
+                if(r.parent.left == r){
+                    r.parent.left = null;
+                } else {
+                    r.parent.right = null;
+                }
+                r.parent = null;
+            }
+        } else if(r.left != null && r.right == null){
+            if(p == null){
+                this.root = r.left;
+                this.root.parent = null;
+            } else {
+                if(r.parent.left == r){
+                    r.parent.left = r.left;
+                } else {
+                    r.parent.right = r.left;
+                }
+                r.left.parent = p;
+            }
+            r.parent = null;
+        } else if(r.left == null && r.right != null){
+            if(p == null){
+                this.root = r.right;
+                this.root.parent = null; 
+            } else {
+                if(r.parent.left == r){
+                    r.parent.left = r.right;
+                } else {
+                    r.parent.right = r.right;
+                }
+                r.right.parent = p;
+            }
+            r.parent = null;
+        } else {
+            // 如果待删除节点拥有左右节点时，则查看左右节点子树的高度，如果左子树较高，则使用前驱节点进行替换，如果右子树较高，则使用后继节点进行替换
+            // 最后再查看树是否平衡。
+            lHeight = height(r.left);
+            rHeight = height(r.right);
+            Node<E> n;
+            if(lHeight > rHeight){
+                n = predecessor(r);
+                if(n.left != null){
+                    n.parent.right = n.left;
+                }
+            } else {
+                n = successor(r);
+                if(n.right != null){
+                    n.parent.left = n.right;
+                }
+            }
+            r.e = n.e;
+        }
     }
 
     private void fixAfterInsertion(Node<E> parent, int heightDiff) {
@@ -175,11 +246,10 @@ public class AVLTree<E extends Comparable<E>> {
         } else {
             Node<E> p = e.parent;
             Node<E> ch = e;
-            while(p != null && ch == p.left){
+            while(p != null && p.left == ch){
                 ch = p;
                 p = p.parent;
             }
-            return p;
         }
     }
 
